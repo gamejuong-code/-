@@ -1,8 +1,10 @@
 # 스마트 과제 관리 — 웹 버전
 
-기존 `tkinter` 프로그램의 과제 등록·수정·삭제, 완료 변경, 검색·필터, 마감일순 목록, 상세 보기, 마감 임박 안내를 웹으로 옮긴 프로젝트입니다. **이 폴더를 GitHub에 올린 뒤 Vercel에서 배포**할 수 있습니다. 윈도우 `.exe`와 원본 `응프.py`는 웹 배포에 필요하지 않습니다.
+기존 `tkinter` 프로그램의 과제 등록·수정·삭제, 완료 변경, 검색·필터, 마감일순 목록, 상세 보기, 마감 임박 안내를 웹으로 옮긴 프로젝트입니다. 웹 파일은 [GitHub 저장소](https://github.com/gamejuong-code/-)에 올라가 있습니다. 윈도우 `.exe`와 원본 `응프.py`는 웹 배포에 필요하지 않습니다.
 
-## 1. Firebase 준비
+현재 버전은 Firebase 프로젝트 `smart-task-manager-14ebb`에 연결되어 있습니다. Firebase의 웹 앱 설정값은 브라우저에 포함되는 공개 식별자이며, 과제 데이터 접근은 로그인과 Firestore 보안 규칙으로 제한합니다.
+
+## 1. Firebase 준비 (다른 프로젝트로 바꿀 때만)
 
 1. [Firebase 콘솔](https://console.firebase.google.com/)에서 프로젝트를 만들고, 프로젝트에 **웹 앱(`</>`)**을 등록합니다.
 2. 웹 앱 설정에 보이는 `firebaseConfig` 값을 준비합니다.
@@ -16,11 +18,7 @@
 
 Node.js 24와 pnpm을 설치한 뒤 이 폴더에서 실행합니다.
 
-```powershell
-Copy-Item .env.example .env.local
-```
-
-`.env.local`의 값을 Firebase 웹 앱 설정으로 채웁니다. 예를 들어 `firebaseConfig.apiKey`는 `VITE_FIREBASE_API_KEY`에, `firebaseConfig.authDomain`은 `VITE_FIREBASE_AUTH_DOMAIN`에 넣습니다. 필수 항목은 `API_KEY`, `AUTH_DOMAIN`, `PROJECT_ID`, `APP_ID`입니다. 빈 항목 앞뒤에 따옴표는 필요하지 않습니다.
+현재 연결된 Firebase를 그대로 사용할 때는 `.env.local`이 필요 없습니다. 다른 프로젝트로 바꿀 때만 `Copy-Item .env.example .env.local`을 실행하고 새 Firebase 웹 앱 설정값을 채웁니다. 예를 들어 `firebaseConfig.apiKey`는 `VITE_FIREBASE_API_KEY`에, `firebaseConfig.authDomain`은 `VITE_FIREBASE_AUTH_DOMAIN`에 넣습니다. 필수 항목은 `API_KEY`, `AUTH_DOMAIN`, `PROJECT_ID`, `APP_ID`입니다. 빈 항목 앞뒤에 따옴표는 필요하지 않습니다.
 
 ```powershell
 pnpm install
@@ -29,29 +27,26 @@ pnpm dev
 
 터미널에 표시된 `http://localhost:5173/`을 열어 회원가입, 로그인, 과제 등록을 확인하세요. `.env.local`을 바꾸면 개발 서버를 다시 시작해야 합니다.
 
-설정을 아직 넣지 않으면 **브라우저 저장 모드**로 실행됩니다. 이 모드는 UI를 체험하기 위한 것으로, 브라우저나 기기가 바뀌면 과제가 동기화되지 않습니다. Firebase 인증·Firestore 요구사항을 충족하려면 위 설정이 필요합니다.
+Firebase 설정값을 모두 제거하거나 초기화에 실패한 경우에만 **브라우저 저장 모드**로 전환됩니다. 이 모드의 과제는 기기 간 동기화되지 않습니다.
 
-## 3. GitHub에 올리기
+## 3. GitHub 저장소
 
-GitHub에서 새 저장소를 만들고, 이 폴더에서 다음 명령을 실행합니다. `<GitHub 저장소 URL>`은 새 저장소 화면에 표시된 주소로 바꿉니다.
+[gamejuong-code/-](https://github.com/gamejuong-code/-) 저장소의 `main` 브랜치에 웹 프로젝트가 올라가 있습니다. 이후 수정사항을 올릴 때는 해당 저장소에서 다음 명령을 사용합니다.
 
 ```powershell
-git init
 git add .
-git commit -m "스마트 과제 관리 웹 버전"
-git branch -M main
-git remote add origin <GitHub 저장소 URL>
-git push -u origin main
+git commit -m "스마트 과제 관리 수정"
+git push
 ```
 
-이미 `origin`이 있다면 `git remote -v`로 확인하세요. 이 경우 `git remote add origin`을 다시 실행하지 않습니다. `.gitignore`가 `.env.local`, `node_modules`, `dist`를 제외합니다. **원본 `과제목록.json`은 공개 저장소에 올리지 마세요.**
+`.gitignore`가 `.env.local`, `node_modules`, `dist`를 제외합니다. **원본 `과제목록.json`은 공개 저장소에 올리지 마세요.**
 
 ## 4. Vercel에 배포
 
 1. [Vercel](https://vercel.com/)에 로그인하고 **Add New → Project**를 누릅니다.
-2. 방금 만든 GitHub 저장소를 연결합니다.
+2. `gamejuong-code/-` GitHub 저장소를 연결합니다.
 3. Framework Preset이 **Vite**, Build Command가 `pnpm build`, Output Directory가 `dist`인지 확인합니다.
-4. **Environment Variables**에 `.env.local`에 넣은 `VITE_FIREBASE_*` 값들을 같은 이름으로 추가합니다. `.env.local` 파일 자체를 업로드하지 않습니다.
+4. 현재 Firebase 프로젝트를 그대로 사용한다면 환경변수 추가 없이 배포할 수 있습니다. 다른 Firebase 프로젝트로 바꿨다면 **Environment Variables**에 `.env.local`의 `VITE_FIREBASE_*` 값들을 같은 이름으로 추가합니다. `.env.local` 파일 자체를 업로드하지 않습니다.
 5. **Deploy**를 누르고 나온 `*.vercel.app` 주소에서 회원가입과 과제 저장을 확인합니다.
 
 환경변수를 배포 후에 추가하거나 수정했다면 다시 배포해야 적용됩니다. 이후 GitHub의 `main` 브랜치에 push하면 Vercel이 자동으로 새 버전을 배포합니다.

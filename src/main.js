@@ -18,12 +18,12 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyD61p7YZHNtqw3J0X7w4JIog4jMH-YSy50",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "smart-task-manager-14ebb.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "smart-task-manager-14ebb",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:899006723080:web:79a8ae698e8d5937914dbd",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "smart-task-manager-14ebb.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "899006723080",
 };
 
 const cloudConfigured = ["apiKey", "authDomain", "projectId", "appId"].every(
