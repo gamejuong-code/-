@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f8fc" />
+    <meta name="description" content="과제를 등록하고 마감일을 놓치지 않도록 관리하는 스마트 과제 관리 웹 앱" />
+    <title>스마트 과제 관리</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="/" aria-label="스마트 과제 관리 홈">
+          <span class="brand-mark" aria-hidden="true">✓</span>
+          <span>스마트 과제 관리</span>
+        </a>
+        <div class="account-area">
+          <span id="userEmail" class="account-email"></span>
+          <button id="logoutButton" class="button button-quiet button-small" type="button" hidden>로그아웃</button>
+        </div>
+      </header>
+
+      <main>
+        <section id="setupPanel" class="setup-note" hidden aria-labelledby="setupTitle">
+          <span class="setup-note-icon" aria-hidden="true">i</span>
+          <div>
+            <h2 id="setupTitle">현재 브라우저 저장 모드로 사용 중이에요</h2>
+            <p>이 기기에서만 과제가 저장됩니다. Firebase 로그인과 기기 간 동기화가 필요하면 <strong>README.md</strong>의 연결 방법을 따라 설정하세요.</p>
+          </div>
+        </section>
+
+        <section id="authPanel" class="gate-panel" hidden aria-labelledby="authTitle">
+          <div class="gate-icon" aria-hidden="true">✦</div>
+          <p class="eyebrow">나만의 과제 공간</p>
+          <h1 id="authTitle">로그인하고 과제를 관리하세요</h1>
+          <p>과제는 계정별로 저장되어 다른 기기에서도 확인할 수 있습니다.</p>
+          <form id="authForm" class="auth-form">
+            <div class="field">
+              <label for="authEmail">이메일</label>
+              <input id="authEmail" name="email" type="email" autocomplete="email" placeholder="name@example.com" required />
+            </div>
+            <div class="field">
+              <label for="authPassword">비밀번호</label>
+              <input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="6자 이상 입력" required />
+            </div>
+            <div class="auth-actions">
+              <button id="signInButton" class="button button-primary" type="submit">로그인</button>
+              <button id="signUpButton" class="button button-secondary" type="button">회원가입</button>
+            </div>
+          </form>
+          <p class="gate-note">처음 사용한다면 이메일과 비밀번호를 입력한 뒤 회원가입을 누르세요.</p>
+        </section>
+
+        <section id="appPanel" hidden aria-label="과제 관리 대시보드">
+          <div class="hero">
+            <div>
+              <p class="eyebrow">MY STUDY PLANNER</p>
+              <h1>해야 할 일을 한눈에.</h1>
+              <p>과제를 정리하고 마감일을 놓치지 마세요.</p>
+            </div>
+            <div class="hero-decoration" aria-hidden="true">
+              <span class="decoration-line"></span>
+              <span class="decoration-check">✓</span>
+            </div>
+          </div>
+
+          <div id="alertBanner" class="alert-banner" role="status" hidden></div>
+
+          <section class="stats-grid" aria-label="과제 현황">
+            <div class="stat-card">
+              <span class="stat-label">전체 과제</span>
+              <strong id="totalCount" class="stat-number">0</strong>
+              <span class="stat-caption">등록된 과제</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">진행 중</span>
+              <strong id="activeCount" class="stat-number">0</strong>
+              <span class="stat-caption">아직 남은 과제</span>
+            </div>
+            <div class="stat-card stat-card-urgent">
+              <span class="stat-label">마감 임박</span>
+              <strong id="dueSoonCount" class="stat-number">0</strong>
+              <span class="stat-caption">오늘 또는 내일</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">완료</span>
+              <strong id="doneCount" class="stat-number">0</strong>
+              <span class="stat-caption">마친 과제</span>
+            </div>
+          </section>
+
+          <div class="workspace-grid">
+            <section class="panel editor-panel" aria-labelledby="editorTitle">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">NEW TASK</p>
+                  <h2 id="editorTitle">과제 등록</h2>
+                </div>
+                <span class="section-icon" aria-hidden="true">＋</span>
+              </div>
+              <form id="taskForm" class="task-form">
+                <div class="field">
+                  <label for="subjectInput">과목명 <span class="required-mark" aria-label="필수">*</span></label>
+                  <input id="subjectInput" name="subject" type="text" maxlength="100" placeholder="예: 응용 프로그래밍" required />
+                </div>
+                <div class="field">
+                  <label for="titleInput">과제명 <span class="required-mark" aria-label="필수">*</span></label>
+                  <input id="titleInput" name="title" type="text" maxlength="150" placeholder="예: 프로젝트 발표 자료" required />
+                </div>
+                <div class="field">
+                  <label for="contentInput">과제 내용</label>
+                  <textarea id="contentInput" name="content" rows="5" maxlength="5000" placeholder="과제 내용이나 준비할 일을 적어주세요"></textarea>
+                </div>
+                <div class="field">
+                  <label for="dueInput">제출 날짜 <span class="required-mark" aria-label="필수">*</span></label>
+                  <input id="dueInput" name="due" type="date" required />
+                </div>
+                <div class="form-actions">
+                  <button id="saveButton" class="button button-primary" type="submit">과제 등록</button>
+                  <button id="cancelEditButton" class="button button-quiet" type="button" hidden>수정 취소</button>
+                </div>
+              </form>
+            </section>
+
+            <div class="content-column">
+              <section class="panel list-panel" aria-labelledby="listTitle">
+                <div class="section-heading list-heading">
+                  <div>
+                    <p class="eyebrow">YOUR TASKS</p>
+                    <h2 id="listTitle">과제 목록</h2>
+                  </div>
+                  <div class="file-actions">
+                    <input id="importInput" class="visually-hidden" type="file" accept="application/json,.json" aria-label="JSON 과제 파일 선택" />
+                    <button id="importButton" class="button button-secondary button-small" type="button">JSON 가져오기</button>
+                    <button id="exportButton" class="button button-secondary button-small" type="button">내보내기</button>
+                  </div>
+                </div>
+                <div class="list-toolbar">
+                  <div class="search-wrap">
+                    <label class="visually-hidden" for="searchInput">과제 검색</label>
+                    <span class="search-icon" aria-hidden="true">⌕</span>
+                    <input id="searchInput" type="search" placeholder="과목, 과제명, 내용 검색" />
+                  </div>
+                  <label class="visually-hidden" for="filterSelect">완료 상태 필터</label>
+                  <select id="filterSelect" aria-label="완료 상태 필터">
+                    <option value="all">전체 보기</option>
+                    <option value="active">미완료만 보기</option>
+                    <option value="done">완료만 보기</option>
+                  </select>
+                </div>
+                <div id="tasksList" class="tasks-list" aria-live="polite"></div>
+                <div id="emptyState" class="empty-state" hidden>
+                  <div class="empty-icon" aria-hidden="true">□</div>
+                  <h3>표시할 과제가 없어요</h3>
+                  <p>새 과제를 등록하거나 검색 조건을 바꿔보세요.</p>
+                </div>
+              </section>
+
+              <section id="detailPanel" class="panel detail-panel" aria-label="선택한 과제 정보">
+                <div class="detail-placeholder">
+                  <span class="detail-placeholder-icon" aria-hidden="true">↗</span>
+                  <div>
+                    <h2>과제 상세</h2>
+                    <p>목록에서 과제를 선택하면 자세한 내용이 여기에 표시됩니다.</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="site-footer">스마트 과제 관리 · 공부의 흐름을 잃지 않도록</footer>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>
